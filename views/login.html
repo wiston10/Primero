@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INVENTARIO ACUEDUCTO</title>
+    <link rel="stylesheet" href="../vendor/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/estiloLogin.css">
+</head>
+<body>
+    <form>
+        <div class="mb-3">
+          <label for="inputDocumento" class="form-label">Documento</label>
+          <input type="number" class="form-control" id="inputDocumento">
+        </div>
+        <div class="mb-3">
+          <label for="inputPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="inputPassword">
+        </div>
+        <div class="mb-3">
+          <label for="inputRol" class="form-label">Seleccione el Rol</label>
+          <select class="form-select form-select-sm" id="inputRol">
+            <option value="adm">Administrador</option>
+            <option value="tecnico">Tecnico en Acueducto</option>
+            <option value="proveedor">Proveedor</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+</body>
+</html>

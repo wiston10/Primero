@@ -1,0 +1,176 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso de Materiales</title>
+    <link rel="stylesheet" href="C:\Users\wfern\OneDrive\Documentos\GitHub\sistema inventario\nuevo--main\assets\css\estiloingreso.css">
+</head>
+<body>
+    <h2>FORMULARIO DE REGISTRO</h2>
+<form id="registro form">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre"required>
+
+    <label for="cantidad">Cantidad:</label>
+    <input type="number"id="cantidad" required>
+    
+    <label for="descripcion">Descripcion:</label>
+    <textarea  id="descripcion"  rows="4" required></textarea>
+
+    <label for="fecha">Fecha:</label>
+    <input type="date" id="fecha"required>
+
+    <label for="precio">Precio:</label>
+    <input type="number" id="precio" step="0.01"required>
+
+    <button type="button" onclick="registrar"> Registrar</button>
+    <!-- Agrega el siguiente botón al final de tu formulario HTML -->
+
+<button type="button" onclick="obtenerRegistros()">Actualizar Registros</button>
+
+     
+</form>   
+<table id="Tabla de Datos">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Descripcion</th>
+            <th>Fecha</th>
+            <th>Precio</th>
+        </tr>
+    </thead>
+    <tbody>
+       <!--aca se mostraran los Datos--> 
+    </tbody>
+
+</table> 
+<script>
+    let registros= [];
+    function registrar(){
+        let Nombre= document.getElementById('Nombre').value;
+        let Cantidad= document.getElementById('Cantidad').value;
+        let Descripcion= document.getElementById('Descripcion').value;
+        let Fecha=document.getElementById('Fecha').value;
+        let Precio=document.getElementById('Precio').value;
+
+    if (!Nombre || !Cantidad || !Descripcion || !Fecha || !Precio) {
+        alert("Todos los campos son obligatorios");
+        return;
+    }
+    // crear objeto con la informacion 
+    let NuevoRegistro={
+        nombre: Nombre,
+        cantidad: Cantidad,
+        descripcion: Descripcion,
+        fecha: Fecha,
+        precio: Precio
+    };
+    // Agregar el nuevo registro al array
+    registros.push(NuevoRegistro);
+
+    // Limpiar el formulario
+    document.getElementById('Formulario').reset();
+    // Actualizar tabla
+    actualizarTabla();
+    }
+    function actualizarTabla() {
+        // asi obtenmos  el elemento de la tabla
+        let tabla = document.getElementById('tablaDatos').getElementsByTagName('tbody')[0];
+
+        // Limpiar la tabla antes de actualizar
+        tabla.innerHTML = '';
+        // funcion recorrer el array de registros y agregar filas a la tabla
+        for (let i = 0; i < registros.length ; i++) {
+            let fila= tabla.insertRow(i);
+            let celdaNombre = fila.insertCell(0);
+            let celdaCantidad = fila.insertCell(1);
+            let celdaDescripcion = fila.insertCell(2);
+            let celdaFecha = fila.insertCell(3);
+            let celdaPrecio = fila.insertCell(4);
+            let celdaacciones= fila.insertCell(5);
+
+            // funcion para rellanar  las celdas con la informacion del resgistro
+            celdaNombre.innerHTML = registros[i].nombre;
+            celdaCantidad.innerHTML = registros[i].cantidad;
+            celdaDescripcion.innerHTML = registros[i].descripcion;
+            celdaFecha.innerHTML = registros[i].fecha;
+            celdaPrecio.innerHTML = registros[i].precio;
+            // Agregamos boton editar y elimnar
+            let btnEditar = document.createElement('button');
+            btnEditar.innerText= ('Editar');
+            btnEditar.addEventListener('click', function (){
+                editarRegistro (i);
+             });
+             celdaacciones.appendChild (btnEditar);
+             celdaacciones.appendChild (btnEliminar);
+               
+            }
+    }
+    function eliminarRegistro(index) {
+        registros.splice(index,1);
+        actualizarTabla();
+        }
+    function editarRegistro (index) {
+        document.getElementById('Nombre').value=registros[index].Nombre;
+        document.getElementById('Cantidad').value=registros[index].Cantidad;
+        document.getElementById('Descripcion').value=registros[index].Descripcion;
+        document.getElementById('Fecha').value=registros[index].Fecha;
+        document.getElementById('Precio').value=registros[index].Precio;
+        registros.splice(index,1);
+        actualizarTabla();  
+    }
+    function enviarDatosAlServidor(datos) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'guardar_registro.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            // Respuesta del servidor
+            console.log(xhr.responseText);
+
+            // Actualizar la tabla después de guardar
+            obtenerRegistros();
+        } else {
+            console.error('Error al enviar los datos al servidor.');
+        }
+    };
+
+    // Enviar datos al servidor en formato JSON
+    xhr.send(JSON.stringify(datos));
+}
+
+function obtenerRegistros() {
+    // Código para obtener registros de la base de datos y actualizar la tabla
+    // Implementar en scripts.js o en un archivo separado
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'obtener_registros.php', true);
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            // Convertir la respuesta JSON a un array de objetos
+            const registros = JSON.parse(xhr.responseText);
+
+            // Llamar a una función para actualizar la tabla con los registros obtenidos
+            actualizarTabla(registros);
+        } else {
+            console.error('Error al obtener los registros del servidor.');
+        }
+    };
+
+    // Enviar solicitud GET al servidor
+    xhr.send();
+}
+
+// Llamar a obtenerRegistros al cargar la página para mostrar registros existentes
+window.onload = function () {
+    obtenerRegistros();
+};
+
+</script>
+
+
+</body>
+</html>
